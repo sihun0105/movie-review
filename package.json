@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "NODE_ENV=development nodemon index",
+    "start:prod": "NODE_ENV=production pm2 index"
   },
   "repository": {
     "type": "git",
@@ -15,5 +17,19 @@
   "bugs": {
     "url": "https://github.com/sihun0105/movie-review/issues"
   },
-  "homepage": "https://github.com/sihun0105/movie-review#readme"
+  "homepage": "https://github.com/sihun0105/movie-review#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.2.0",
+    "passport": "^0.6.0",
+    "passport-kakao": "^1.0.1",
+    "passport-local": "^1.0.0",
+    "pm2": "^5.2.2",
+    "typeorm": "^0.3.12"
+  }
 }
