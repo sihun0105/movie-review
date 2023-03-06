@@ -1,13 +1,17 @@
-const express = require("express");
-const cookieParser = require("cookie-parser");
-const morgan = require("morgan");
-const path = require("path");
-const session = require("express-session");
-const dotenv = require("dotenv");
+import express, {NextFunction, Request, Response} from 'express';
+import cookieParser  from "cookie-parser";
+import morgan from "morgan";
+import path from "path";
+import session from "express-session";
+import dotenv from "dotenv";
 dotenv.config();
 
-const pageRouter = require("./router/page");
+import pageRouter from './router/page';
 
+interface SystemError {
+  message: string;
+  status: number;
+}
 const app = express();
 app.set("port", process.env.PORT);
 
@@ -29,12 +33,11 @@ app.use(
   );
 app.use("/",pageRouter);
 
-app.use((req, res, next) => {
+app.use((req : Request, res : Response, next : NextFunction) => {
     const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
-    error.status = 404;
     next(error);
 });
-app.use((err, req, res, next) => {
+app.use((err : SystemError, req : Request, res : Response, next : NextFunction) => {
     res.locals.message = err.message;
     res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
     res.status(err.status || 500);
