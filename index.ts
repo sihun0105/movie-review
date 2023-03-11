@@ -6,7 +6,17 @@ import dotenv from "dotenv";
 import pageRouter from './src/router/page';
 import {AppDataSource} from './models/index';
 import { SystemError } from './src/interface/error.interface';
+import * as redis from 'redis';
 dotenv.config();
+
+const redisClient = redis.createClient({legacyMode: true }); // legacy 모드 반드시 설정 !!
+redisClient.on('connect', () => {
+   console.info('Redis connected!');
+});
+redisClient.on('error', (err) => {
+   console.error('Redis Client Error', err);
+});
+redisClient.connect().then(); // redis v4 연결 (비동기)
 
 AppDataSource.initialize().then(()=>{
   console.log('db connection...')
