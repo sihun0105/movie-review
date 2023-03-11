@@ -1,11 +1,11 @@
 import express, {NextFunction, Request, Response} from 'express';
 import cookieParser  from "cookie-parser";
 import morgan from "morgan";
-import path from "path";
 import session from "express-session";
 import dotenv from "dotenv";
 import pageRouter from './src/router/page';
 import {AppDataSource} from './models/index';
+import { SystemError } from './src/interface/error.interface';
 dotenv.config();
 
 AppDataSource.initialize().then(()=>{
@@ -14,10 +14,6 @@ AppDataSource.initialize().then(()=>{
 console.log(err)
 })
 
-interface SystemError {
-  message: string;
-  status: number;
-}
 const app = express();
 app.set("port", process.env.PORT);
 
