@@ -34,6 +34,7 @@
     "passport-kakao": "^1.0.1",
     "passport-local": "^1.0.0",
     "pm2": "^5.2.2",
+    "redis": "^4.6.5",
     "ts-node": "^10.9.1",
     "typeorm": "^0.3.12"
   },
