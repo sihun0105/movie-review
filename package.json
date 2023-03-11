@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --exec ts-node index.ts",
-    "start:dev": "NODE_ENV=development nodemon index",
-    "start:prod": "NODE_ENV=production pm2 index"
+    "start:dev": "NODE_ENV=development nodemon --exec ts-node index.ts",
+    "start:prod": "NODE_ENV=production pm2 --exec ts-node index.ts"
   },
   "repository": {
     "type": "git",

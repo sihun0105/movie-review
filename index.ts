@@ -4,9 +4,15 @@ import morgan from "morgan";
 import path from "path";
 import session from "express-session";
 import dotenv from "dotenv";
+import pageRouter from './src/router/page';
+import {AppDataSource} from './models/index';
 dotenv.config();
 
-import pageRouter from './router/page';
+AppDataSource.initialize().then(()=>{
+  console.log('db connection...')
+}).catch((err)=>{
+console.log(err)
+})
 
 interface SystemError {
   message: string;
