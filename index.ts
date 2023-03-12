@@ -3,10 +3,11 @@ import cookieParser  from "cookie-parser";
 import morgan from "morgan";
 import session from "express-session";
 import dotenv from "dotenv";
-import pageRouter from './src/router/page';
+import pageRouter from './src/router/page.router';
 import {AppDataSource} from './models/index';
 import { SystemError } from './src/interface/error.interface';
 import * as redis from 'redis';
+import userRouter from './src/router/user.router'
 dotenv.config();
 
 const redisClient = redis.createClient({legacyMode: true }); // legacy 모드 반드시 설정 !!
@@ -44,6 +45,7 @@ app.use(
     })
   );
 app.use("/",pageRouter);
+app.use("/user",userRouter);
 
 app.use((req : Request, res : Response, next : NextFunction) => {
     const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
