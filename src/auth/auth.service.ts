@@ -26,7 +26,6 @@ export class AuthService {
 
   async login(user: any) {
     const payload = { username: user.email, sub: user.id };
-    const savedTime = await this.cacheManager.get<number>('time')
     const acc = this.jwtService.sign(payload);
     const ref = await this.userService.updateRefreshToken(user)
     await this.cacheManager.set(payload.username, acc,300);

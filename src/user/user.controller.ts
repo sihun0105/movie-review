@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/JwtAuthGuard';
@@ -19,9 +19,18 @@ export class UserController {
     }
     return this.authService.login(user);
   }
-
+  @UseGuards(JwtAuthGuard)
   @Post('refresh')
   async refresh(@Body('refreshToken') refreshToken: string) {
+    console.log(refreshToken)
     return this.authService.refresh(refreshToken);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  findAll(@Request() req) {
+    return 123; // This will log the user's information
+
+    // Your implementation here
   }
 }
