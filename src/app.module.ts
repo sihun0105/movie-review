@@ -9,13 +9,15 @@ import { JwtStrategy } from './auth/jwt.strategy';
 import { AuthService } from './auth/auth.service';
 import * as ormconfig from '../ormconfig';
 import * as redisStore from 'cache-manager-ioredis';
-import { AuthMiddleware } from './middleware/Auth.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { MovieService } from './movie/movie.service';
+import { Movie } from './entities/movie.entity';
+import { HttpModule } from '@nestjs/axios';
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User,Movie]),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -28,15 +30,9 @@ import { AppService } from './app.service';
       port: 6379,
     },
     ),
+    HttpModule
   ],
   controllers: [UserController,AppController],
-  providers: [UserService, AuthService, JwtStrategy,AppService],
+  providers: [UserService, AuthService, JwtStrategy,AppService, MovieService],
 })
 export class AppModule{}
-// export class AppModule implements NestModule{
-//   configure(consumer: MiddlewareConsumer) {
-//     consumer
-//     .apply(AuthMiddleware).
-//     forRoutes('*');
-//   }
-// }
