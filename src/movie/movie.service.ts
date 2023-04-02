@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class MovieService {
-  private readonly apiKey = '6c3972b61faf51705039afda4d42a932';
+  private readonly apiKey = process.env.MOVIE_SECRET;
   private readonly baseUrl = 'http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json';
 
   constructor(
@@ -24,10 +24,15 @@ export class MovieService {
 
     for (const movieData of movieList) {
       const movie = new Movie();
-      movie.title = movieData.movieNm;
-      movie.audience = movieData.audiAcc;
-      // ...
-      await this.movieRepository.save(movie);
+      const checkMovie = await this.movieRepository.findOne({where:{title:movieData.movieNm}})
+      if(!checkMovie){
+        movie.title = movieData.movieNm;
+        movie.audience = movieData.audiAcc;
+        await this.movieRepository.save(movie);
+      }else{
+        checkMovie.audience=movieData.audiAcc
+        await this.movieRepository.save(checkMovie);
+      }
     }
   }
 }
