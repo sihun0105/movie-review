@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/JwtAuthGuard';
 import { LoginDto } from '../user/dto/login.dto';
@@ -26,7 +25,7 @@ export class UserController {
   }
 
   @Post('join')
-  async join(@Body() JoinDto){
+  async join(@Body() JoinDto:JoinDto){
     return this.userService.create(JoinDto.email,JoinDto.password,JoinDto.nickname)
   }
 
@@ -37,11 +36,4 @@ export class UserController {
     return this.authService.refresh(refreshToken);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  findAll(@Request() req) {
-    return 123; // This will log the user's information
-
-    // Your implementation here
-  }
 }

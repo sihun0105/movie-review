@@ -10,14 +10,6 @@ export class AppController {
     @Inject(CACHE_MANAGER) private cacheManager: Cache
     ) {}
   
-  @Get("/cache")
-  async getCache() {
-    console.log(222)
-    const savedTime = await this.cacheManager.get<number>('time')
-    if( savedTime ){
-      return "saved time : " + savedTime
-    }
-  }
   @Get('/')
   getHello() {
     return this.movieService.fetchMovies('20230301');
