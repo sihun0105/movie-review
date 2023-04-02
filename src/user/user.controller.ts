@@ -3,10 +3,15 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/JwtAuthGuard';
 import { LoginDto } from '../user/dto/login.dto';
+import { UserService } from './user.service';
+import { JoinDto } from './dto/Join.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private userService : UserService
+    ) {}
 
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
@@ -19,6 +24,12 @@ export class UserController {
     }
     return this.authService.login(user);
   }
+
+  @Post('join')
+  async join(@Body() JoinDto){
+    return this.userService.create(JoinDto.email,JoinDto.password,JoinDto.nickname)
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('refresh')
   async refresh(@Body('refreshToken') refreshToken: string) {

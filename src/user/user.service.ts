@@ -26,11 +26,12 @@ export class UserService {
     return refreshToken;
   }
 
-  async create(email: string, password: string) {
+  async create(email: string, password: string,nickname:string) {
     const hashedPassword = await hash(password, 10);
     const user = this.userRepository.create({
       email,
       password: hashedPassword,
+      nickname
     });
     return this.userRepository.save(user);
   }
