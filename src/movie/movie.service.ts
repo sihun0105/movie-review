@@ -31,6 +31,7 @@ export class MovieService {
         await this.movieRepository.save(movie);
       }else{
         checkMovie.audience=movieData.audiAcc
+        await this.movieRepository.delete({})
         await this.movieRepository.save(checkMovie);
       }
     }
