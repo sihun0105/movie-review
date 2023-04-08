@@ -1,5 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import dotenv from 'dotenv';
+import { Comment } from 'src/entities/commnet.entity';
 import { Movie } from 'src/entities/movie.entity';
 import { User } from 'src/entities/user.entity';
 
@@ -11,7 +12,7 @@ const config: TypeOrmModuleOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  entities: [User,Movie],
+  entities: [User,Movie,Comment],
   // migrations: [__dirname + '/src/migrations/*.ts'],
   // cli: { migrationsDir: 'src/migrations' },
   autoLoadEntities: true,
