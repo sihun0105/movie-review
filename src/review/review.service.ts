@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Comment } from 'src/entities/commnet.entity';
 import { Movie } from 'src/entities/movie.entity';
 import { Repository } from 'typeorm';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -8,14 +9,16 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 @Injectable()
 export class ReviewService {
   constructor(
-    @InjectRepository(Movie) private movieRepository: Repository<Movie>,
+    @InjectRepository(Comment) private commentRepository: Repository<Comment>,
   ) {}
 
   async create(createReviewDto: CreateReviewDto) {
-    const commnet = this.movieRepository.create({
-            
+    const commnet = this.commentRepository.create({
+      comment : createReviewDto.comment,
+      movieId : createReviewDto.movieId,
+      userno : createReviewDto.writer
     });
-    return this.movieRepository.save(commnet);
+    return this.commentRepository.save(commnet);
   }
 
   findAll() {
