@@ -19,19 +19,22 @@ export class MovieService {
   async fetchMovies(date: string): Promise<void> {
     const url = `${this.baseUrl}?key=${this.apiKey}&targetDt=${date}`;
     const response: AxiosResponse = await this.httpService.get(url).toPromise();
-
+    
     const movieList = response.data.boxOfficeResult.dailyBoxOfficeList;
 
     for (const movieData of movieList) {
       const movie = new Movie();
-      const checkMovie = await this.movieRepository.findOne({where:{title:movieData.movieNm}})
+      const checkMovie = await this.movieRepository.findOne({where:{movieCd:movieData.movieCd}})
       if(!checkMovie){
+        movie.movieCd = movieData.movieCd;
         movie.title = movieData.movieNm;
         movie.audience = movieData.audiAcc;
         await this.movieRepository.save(movie);
       }else{
-        checkMovie.audience=movieData.audiAcc
-        await this.movieRepository.delete({})
+        movie.movieCd = movieData.movieCd;
+        movie.title = movieData.movieNm;
+        movie.audience = movieData.audiAcc;
+        await this.movieRepository.delete({movieCd:movie.movieCd});
         await this.movieRepository.save(checkMovie);
       }
     }
