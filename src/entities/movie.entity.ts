@@ -10,8 +10,11 @@ export class Movie {
   title: string;
 
   @Column()
+  movieCd: number;
+
+  @Column()
   audience: number;
 
-  @OneToMany(() => Comment, comment => comment.movie)
+  @OneToMany(() => Comment, comment => comment.movie,{onDelete:"CASCADE"})
   Comments: Comment[]; // change to uppercase "C"
 }

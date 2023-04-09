@@ -12,6 +12,9 @@ export class Comment {
   @Column()
   comment: string;
 
+  @Column()
+  userno : number;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -21,6 +24,6 @@ export class Comment {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @ManyToOne(() => Movie, movie => movie.Comments) // use uppercase "C"
+  @ManyToOne(() => Movie, movie => movie.Comments,{onDelete:"CASCADE"}) // use uppercase "C"
   movie: Movie[];
 }
