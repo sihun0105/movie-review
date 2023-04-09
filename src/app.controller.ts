@@ -13,7 +13,7 @@ export class AppController {
   @Get('/')
   getHello() {
     const nowdate = new Date();
-    let formattedDate = nowdate.getFullYear().toString() + (nowdate.getMonth() + 1).toString().padStart(2, '0') + nowdate.getDate().toString().padStart(2, '0');
+    let formattedDate = nowdate.getFullYear().toString() + (nowdate.getMonth() + 1).toString().padStart(2, '0') + (nowdate.getDate() - 1).toString().padStart(2, '0');
     console.log(formattedDate)
     return this.movieService.fetchMovies(formattedDate);
   }
