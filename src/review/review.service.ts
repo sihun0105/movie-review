@@ -21,19 +21,19 @@ export class ReviewService {
     return this.commentRepository.save(commnet);
   }
 
-  findAll() {
-    return `This action returns all review`;
+  async update(updateReviewDto: UpdateReviewDto) {
+  const result = await this.commentRepository.findOne({where:{id:updateReviewDto.id}});
+    if (!result) {
+      throw new Error('데이터 없음.');
+    }
+  const updateData = Object.assign(result,updateReviewDto);
+  return await this.commentRepository.save(updateData);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} review`;
-  }
-
-  update(id: number, updateReviewDto: UpdateReviewDto) {
-    return `This action updates a #${id} review`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} review`;
+  async remove(id: number) {
+    const result = await this.commentRepository.delete(id);
+    if (result.affected === 0) {
+      throw new Error('삭제할 데이터가 없습니다.');
+    }
   }
 }

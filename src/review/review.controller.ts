@@ -12,23 +12,13 @@ export class ReviewController {
     return this.reviewService.create(createReviewDto);
   }
 
-  @Get()
-  findAll() {
-    return this.reviewService.findAll();
+  @Post('/update')
+  update(@Body() updateReviewDto: UpdateReviewDto) {
+    return this.reviewService.update( updateReviewDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reviewService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete()
+  remove(@Body() id: string) {
     return this.reviewService.remove(+id);
   }
 }
