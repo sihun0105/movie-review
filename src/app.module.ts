@@ -1,4 +1,4 @@
-import { Module,CacheModule, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module,CacheModule, NestModule, MiddlewareConsumer, OnApplicationBootstrap } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
@@ -39,4 +39,16 @@ import { ScheduleModule } from '@nestjs/schedule';
   controllers: [UserController,AppController],
   providers: [UserService, AuthService, JwtStrategy,AppService, MovieService],
 })
-export class AppModule{}
+export class AppModule implements OnApplicationBootstrap {
+  constructor(private readonly movieService: MovieService) {}
+
+  async onApplicationBootstrap() {
+    const nowdate = new Date();
+    let formattedDate = nowdate
+      .getFullYear()
+      .toString() +
+      (nowdate.getMonth() + 1).toString().padStart(2, '0') +
+      (nowdate.getDate() - 1).toString().padStart(2, '0');
+    await this.movieService.fetchMovies(formattedDate);
+  }
+}

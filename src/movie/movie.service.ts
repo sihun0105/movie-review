@@ -22,21 +22,14 @@ export class MovieService {
     
     const movieList = response.data.boxOfficeResult.dailyBoxOfficeList;
 
+    await this.movieRepository.delete({})
     for (const movieData of movieList) {
       const movie = new Movie();
-      const checkMovie = await this.movieRepository.findOne({where:{movieCd:movieData.movieCd}})
-      if(!checkMovie){
+      //const checkMovie = await this.movieRepository.findOne({where:{movieCd:movieData.movieCd}})
         movie.movieCd = movieData.movieCd;
         movie.title = movieData.movieNm;
         movie.audience = movieData.audiAcc;
-        await this.movieRepository.save(movie);
-      }else{
-        movie.movieCd = movieData.movieCd;
-        movie.title = movieData.movieNm;
-        movie.audience = movieData.audiAcc;
-        await this.movieRepository.delete({movieCd:movie.movieCd});
-        await this.movieRepository.save(checkMovie);
-      }
+      await this.movieRepository.save(movie)
     }
   }
 }
