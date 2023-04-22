@@ -2,6 +2,7 @@ import { CACHE_MANAGER, Controller, Get, Inject, Query, UseGuards } from '@nestj
 import { AppService } from './app.service';
 import { Cache } from 'cache-manager'
 import { MovieService } from './movie/movie.service';
+import { Cron } from '@nestjs/schedule';
 @Controller()
 export class AppController {
   constructor(
@@ -9,12 +10,19 @@ export class AppController {
     private readonly movieService : MovieService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache
     ) {}
-  /**업데이트는 하루 1회로 수정할것. */
   @Get('/')
-  getHello() {
+  getMoviedataSelf() {
     const nowdate = new Date();
     let formattedDate = nowdate.getFullYear().toString() + (nowdate.getMonth() + 1).toString().padStart(2, '0') + (nowdate.getDate() - 1).toString().padStart(2, '0');
     console.log(formattedDate)
     return this.movieService.fetchMovies(formattedDate);
+  }
+
+  @Cron('0 0 * * *')
+  getMoviedata() {
+    console.log('Executing task once a day');
+    const nowdate = new Date();
+    let formattedDate = nowdate.getFullYear().toString() + (nowdate.getMonth() + 1).toString().padStart(2, '0') + (nowdate.getDate() - 1).toString(). padStart(2, '0');
+    this.movieService.fetchMovies(formattedDate);
   }
 }

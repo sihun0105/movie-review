@@ -15,6 +15,7 @@ import { MovieService } from './movie/movie.service';
 import { Movie } from './entities/movie.entity';
 import { HttpModule } from '@nestjs/axios';
 import { ReviewModule } from './review/review.module';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
@@ -32,7 +33,8 @@ import { ReviewModule } from './review/review.module';
     },
     ),
     HttpModule,
-    ReviewModule
+    ReviewModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [UserController,AppController],
   providers: [UserService, AuthService, JwtStrategy,AppService, MovieService],
