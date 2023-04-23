@@ -15,6 +15,6 @@ export class Movie {
   @Column()
   audience: number;
 
-  @OneToMany(() => Comment, comment => comment.movie,{onDelete:"CASCADE"})
-  Comments: Comment[]; // change to uppercase "C"
+  // @OneToMany(() => Comment, comment => comment.movie,{onDelete:"CASCADE"})
+  // Comments: Comment[]; // change to uppercase "C"
 }

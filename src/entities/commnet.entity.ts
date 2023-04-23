@@ -23,7 +23,7 @@ export class Comment {
 
   @DeleteDateColumn()
   deletedAt: Date | null;
-
-  @ManyToOne(() => Movie, movie => movie.Comments,{onDelete:"CASCADE"}) // use uppercase "C"
-  movie: Movie[];
+  
+  // @ManyToOne(() => Movie, movie => movie.Comments,{onDelete:"CASCADE"}) // use uppercase "C"
+  // movie: Movie[];
 }
