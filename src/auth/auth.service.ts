@@ -2,16 +2,22 @@ import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcryptjs';
 import { UserService } from '../user/user.service';
-import { Cache } from 'cache-manager'
+import { Cache } from 'cache-manager';
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async validateUser(email: string, password: string) {
+    if (email == null || undefined) {
+      return null;
+    }
+    if (password == null || undefined) {
+      return null;
+    }
     const user = await this.userService.findOne(email);
     if (!user) {
       return null;
@@ -27,11 +33,11 @@ export class AuthService {
   async login(user: any) {
     const payload = { username: user.email, sub: user.id };
     const acc = this.jwtService.sign(payload);
-    const ref = await this.userService.updateRefreshToken(user)
-    await this.cacheManager.set(payload.username, acc,300);
+    const ref = await this.userService.updateRefreshToken(user);
+    await this.cacheManager.set(payload.username, acc, 300);
     return {
       accessToken: acc,
-      refreshToken: ref
+      refreshToken: ref,
     };
   }
 
