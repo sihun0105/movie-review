@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Inject,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AppService } from './app.service';
@@ -28,7 +27,7 @@ export class AppController {
   getMoviedata() {
     console.log('Executing task once a day');
     const nowdate = new Date();
-    let formattedDate =
+    const formattedDate =
       nowdate.getFullYear().toString() +
       (nowdate.getMonth() + 1).toString().padStart(2, '0') +
       (nowdate.getDate() - 1).toString().padStart(2, '0');
