@@ -14,20 +14,22 @@ export class ReviewService {
 
   async create(createReviewDto: CreateReviewDto) {
     const commnet = this.commentRepository.create({
-      comment : createReviewDto.comment,
-      movieId : createReviewDto.movieId,
-      userno : createReviewDto.writer
+      comment: createReviewDto.comment,
+      movieId: createReviewDto.movieId,
+      userno: createReviewDto.writer,
     });
     return this.commentRepository.save(commnet);
   }
 
   async update(updateReviewDto: UpdateReviewDto) {
-  const result = await this.commentRepository.findOne({where:{id:updateReviewDto.id}});
+    const result = await this.commentRepository.findOne({
+      where: { id: updateReviewDto.id },
+    });
     if (!result) {
       throw new Error('데이터 없음.');
     }
-  const updateData = Object.assign(result,updateReviewDto);
-  return await this.commentRepository.save(updateData);
+    const updateData = Object.assign(result, updateReviewDto);
+    return await this.commentRepository.save(updateData);
   }
 
   async remove(id: number) {

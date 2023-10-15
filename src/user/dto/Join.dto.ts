@@ -1,6 +1,5 @@
 export class JoinDto {
-    email: string;
-    password: string;
-    nickname: string;
-  }
-  
+  email: string;
+  password: string;
+  nickname: string;
+}

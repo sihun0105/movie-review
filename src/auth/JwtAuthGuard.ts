@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { Cache } from 'cache-manager';
-import { from, map, Observable, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -34,6 +34,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (!refreshToken) {
       return false;
     }
-    return true
+    return true;
   }
 }

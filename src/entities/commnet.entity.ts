@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  ManyToOne,
+} from 'typeorm';
 import { Movie } from './movie.entity';
 
 @Entity()
@@ -13,7 +21,7 @@ export class Comment {
   comment: string;
 
   @Column()
-  userno : number;
+  userno: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -23,7 +31,7 @@ export class Comment {
 
   @DeleteDateColumn()
   deletedAt: Date | null;
-  
+
   // @ManyToOne(() => Movie, movie => movie.Comments,{onDelete:"CASCADE"}) // use uppercase "C"
   // movie: Movie[];
 }

@@ -12,11 +12,11 @@ export class UserService {
   ) {}
 
   async findOne(email: string) {
-    return this.userRepository.findOne({ where : {email} });
+    return this.userRepository.findOne({ where: { email } });
   }
 
   async findOneByRefreshToken(refreshToken: string) {
-    return this.userRepository.findOne({ where : {refreshToken} });
+    return this.userRepository.findOne({ where: { refreshToken } });
   }
 
   async updateRefreshToken(user: User) {
@@ -26,12 +26,12 @@ export class UserService {
     return refreshToken;
   }
 
-  async create(email: string, password: string,nickname:string) {
+  async create(email: string, password: string, nickname: string) {
     const hashedPassword = await hash(password, 10);
     const user = this.userRepository.create({
       email,
       password: hashedPassword,
-      nickname
+      nickname,
     });
     return this.userRepository.save(user);
   }
