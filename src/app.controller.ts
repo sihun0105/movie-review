@@ -18,7 +18,7 @@ export class AppController {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
   @Get('/')
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   getMoviedataSelf() {
     return this.movieService.getMovies();
   }
