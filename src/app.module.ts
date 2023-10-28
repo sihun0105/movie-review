@@ -16,6 +16,7 @@ import { Movie } from './entities/movie.entity';
 import { HttpModule } from '@nestjs/axios';
 import { ReviewModule } from './review/review.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { PrismaService } from './prisma/prisma.service';
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
@@ -35,7 +36,14 @@ import { ScheduleModule } from '@nestjs/schedule';
     ScheduleModule.forRoot(),
   ],
   controllers: [UserController, AppController],
-  providers: [UserService, AuthService, JwtStrategy, AppService, MovieService],
+  providers: [
+    UserService,
+    AuthService,
+    JwtStrategy,
+    AppService,
+    MovieService,
+    PrismaService,
+  ],
 })
 export class AppModule implements OnApplicationBootstrap {
   constructor(private readonly movieService: MovieService) {}
