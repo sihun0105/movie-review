@@ -1,41 +1,50 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Comment } from 'src/entities/commnet.entity';
-import { Movie } from 'src/entities/movie.entity';
-import { Repository } from 'typeorm';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { comment } from '@prisma/client';
 
 @Injectable()
 export class ReviewService {
-  constructor(
-    @InjectRepository(Comment) private commentRepository: Repository<Comment>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async create(createReviewDto: CreateReviewDto) {
-    const commnet = this.commentRepository.create({
-      comment: createReviewDto.comment,
-      movieId: createReviewDto.movieId,
-      userno: createReviewDto.writer,
+  async create(createReviewDto: CreateReviewDto): Promise<comment> {
+    return await this.prisma.comment.create({
+      data: {
+        comment: createReviewDto.comment,
+        movieId: createReviewDto.movieId,
+        userno: createReviewDto.writer,
+      },
     });
-    return this.commentRepository.save(commnet);
   }
 
-  async update(updateReviewDto: UpdateReviewDto) {
-    const result = await this.commentRepository.findOne({
-      where: { id: updateReviewDto.id },
+  async update(updateReviewDto: UpdateReviewDto): Promise<comment> {
+    const comment = await this.prisma.comment.findUnique({
+      where: {
+        id: updateReviewDto.id,
+      },
     });
-    if (!result) {
+    if (!comment) {
       throw new Error('데이터 없음.');
     }
-    const updateData = Object.assign(result, updateReviewDto);
-    return await this.commentRepository.save(updateData);
+    return await this.prisma.comment.update({
+      where: { id: updateReviewDto.id },
+      data: {
+        comment: updateReviewDto.comment,
+        userno: updateReviewDto.writer,
+      },
+    });
   }
 
-  async remove(id: number) {
-    const result = await this.commentRepository.delete(id);
-    if (result.affected === 0) {
+  async remove(id: number): Promise<comment> {
+    const comment = await this.prisma.comment.delete({
+      where: {
+        id: id,
+      },
+    });
+    if (!comment) {
       throw new Error('삭제할 데이터가 없습니다.');
     }
+    return comment;
   }
 }
