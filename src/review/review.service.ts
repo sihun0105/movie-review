@@ -19,21 +19,17 @@ export class ReviewService {
   }
 
   async update(updateReviewDto: UpdateReviewDto): Promise<comment> {
-    const comment = await this.prisma.comment.findUnique({
-      where: {
-        id: updateReviewDto.id,
-      },
-    });
-    if (!comment) {
-      throw new Error('데이터 없음.');
-    }
-    return await this.prisma.comment.update({
+    const comment = await this.prisma.comment.update({
       where: { id: updateReviewDto.id },
       data: {
         comment: updateReviewDto.comment,
         userno: updateReviewDto.writer,
       },
     });
+    if (!comment) {
+      throw new Error('업데이트할 데이터가 없습니다.');
+    }
+    return comment;
   }
 
   async remove(id: number): Promise<comment> {
