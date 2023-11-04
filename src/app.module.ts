@@ -17,6 +17,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ReviewModule } from './review/review.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaService } from './prisma/prisma.service';
+import { AuthController } from './auth/auth.controller';
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
@@ -35,7 +36,7 @@ import { PrismaService } from './prisma/prisma.service';
     ReviewModule,
     ScheduleModule.forRoot(),
   ],
-  controllers: [UserController, AppController],
+  controllers: [UserController, AppController, AuthController],
   providers: [
     UserService,
     AuthService,
