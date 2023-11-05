@@ -18,6 +18,7 @@ import { ReviewModule } from './review/review.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaService } from './prisma/prisma.service';
 import { AuthController } from './auth/auth.controller';
+import { TasksService } from './tasks/tasks.service';
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
@@ -44,6 +45,7 @@ import { AuthController } from './auth/auth.controller';
     AppService,
     MovieService,
     PrismaService,
+    TasksService,
   ],
 })
 export class AppModule implements OnApplicationBootstrap {
