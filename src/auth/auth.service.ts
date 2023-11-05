@@ -1,4 +1,9 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  CACHE_MANAGER,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { user } from '@prisma/client';
 import { compare } from 'bcryptjs';
@@ -16,12 +21,8 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string) {
-    if (email == null || undefined) {
-      return null;
-    }
-    if (password == null || undefined) {
-      return null;
-    }
+    if (!email || !password)
+      throw new BadRequestException('email , password에 문제가 있습니다.');
     const user = await this.findOne(email);
     if (!user) {
       return null;
@@ -47,6 +48,8 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string) {
+    if (!refreshToken)
+      throw new BadRequestException('refreshToken이 없습니다.');
     const user = await this.findOneByRefreshToken(refreshToken);
     if (user) {
       const payload = { username: user.email, sub: user.id };
