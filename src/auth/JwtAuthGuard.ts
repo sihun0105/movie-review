@@ -1,20 +1,14 @@
-import { Injectable, ExecutionContext, Inject } from '@nestjs/common';
+import { Injectable, ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
-import { Cache } from 'cache-manager';
 import { Observable } from 'rxjs';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
     private jwtService: JwtService,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @Inject('CACHE_MANAGER')
-    private cacheManager: Cache,
+    private readonly prisma: PrismaService,
   ) {
     super();
   }
@@ -28,7 +22,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
     const token = authHeader.substring(7);
     const payload = this.jwtService.verify(token);
-    const refreshToken = this.userRepository.findOne({
+    const refreshToken = this.prisma.user.findFirst({
       where: { id: payload.sub },
     });
     if (!refreshToken) {
