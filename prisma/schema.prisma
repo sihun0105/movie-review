@@ -20,19 +20,20 @@ model comment {
 }
 
 model movie {
-  id       Int    @id @default(autoincrement())
-  audience Int
-  movieCd  Int
-  title    String @db.VarChar(255)
+  id        Int      @id @default(autoincrement())
+  audience  Int
+  movieCd   Int
+  title     String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @db.DateTime(6)
+  updatedAt DateTime @default(now()) @db.DateTime(6)
 }
 
 model user {
-  id           Int       @id @default(autoincrement())
-  email        String    @unique(map: "IDX_e12875dfb3b1d92d7d7c5377e2") @db.VarChar(30)
-  nickname     String    @db.VarChar(30)
-  password     String    @db.VarChar(100)
-  createdAt    DateTime  @default(now()) @db.DateTime(6)
-  updatedAt    DateTime  @default(now()) @db.DateTime(6)
-  deletedAt    DateTime? @db.DateTime(6)
-  refreshToken String?   @db.VarChar(255)
+  id        Int       @id @default(autoincrement())
+  email     String    @unique(map: "IDX_e12875dfb3b1d92d7d7c5377e2") @db.VarChar(30)
+  nickname  String    @db.VarChar(30)
+  password  String    @db.VarChar(100)
+  createdAt DateTime  @default(now()) @db.DateTime(6)
+  updatedAt DateTime  @default(now()) @db.DateTime(6)
+  deletedAt DateTime? @db.DateTime(6)
 }

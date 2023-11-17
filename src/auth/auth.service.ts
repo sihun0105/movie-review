@@ -3,14 +3,14 @@ import {
   CACHE_MANAGER,
   Inject,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { user } from '@prisma/client';
 import { compare } from 'bcryptjs';
 import { Cache } from 'cache-manager';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { v4 as uuidv4 } from 'uuid';
 import { hash } from 'bcryptjs';
+import { RefreshTokenDto } from './dto/refresh-token-dto';
 
 @Injectable()
 export class AuthService {
@@ -37,44 +37,53 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { username: user.email, sub: user.id };
-    const acc = this.jwtService.sign(payload);
-    const ref = await this.updateRefreshToken(user);
-    await this.cacheManager.set(payload.username, acc, 300);
+    const payload = { username: user.email, userid: user.id };
+    const acc = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
+    });
+    const refreshPayload = { payload, acc };
+    const ref = this.jwtService.sign(refreshPayload, {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME,
+    });
+    await this.cacheManager.set(payload.username, acc, 24 * 60 * 60);
     return {
       accessToken: acc,
       refreshToken: ref,
     };
   }
 
-  async refresh(refreshToken: string) {
-    if (!refreshToken)
-      throw new BadRequestException('refreshToken이 없습니다.');
-    const user = await this.findOneByRefreshToken(refreshToken);
-    if (user) {
-      const payload = { username: user.email, sub: user.id };
-      return {
-        accessToken: this.jwtService.sign(payload),
-        refreshToken: await this.updateRefreshToken(user),
-      };
+  async refresh(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<{ accessToken: string }> {
+    const { refresh_token } = refreshTokenDto;
+
+    if (!refresh_token) {
+      throw new UnauthorizedException('Refresh token must be provided');
     }
-    return null;
+
+    const decodedRefreshToken = this.jwtService.verify(refresh_token, {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
+    const payload = {
+      username: decodedRefreshToken.payload.username,
+      userid: decodedRefreshToken.payload.userid,
+    };
+    const userId = decodedRefreshToken.payload.username;
+    if (!userId) {
+      throw new UnauthorizedException('Invalid user!');
+    }
+
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
+    });
+
+    return { accessToken };
   }
+
   async findOne(email: string) {
     return this.prisma.user.findUnique({ where: { email } });
-  }
-
-  async findOneByRefreshToken(refreshToken: string) {
-    return this.prisma.user.findFirst({ where: { refreshToken } });
-  }
-
-  async updateRefreshToken(user: user) {
-    const refreshToken = uuidv4();
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: { refreshToken: refreshToken },
-    });
-    return refreshToken;
   }
 
   async create(email: string, password: string, nickname: string) {

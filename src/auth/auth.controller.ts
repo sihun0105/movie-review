@@ -8,8 +8,8 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from 'src/user/dto/login.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { JoinDto } from 'src/user/dto/Join.dto';
+import { RefreshDto } from 'src/user/dto/refreshToken.dto';
 import { JwtAuthGuard } from './JwtAuthGuard';
 
 @Controller('auth')
@@ -36,10 +36,9 @@ export class AuthController {
       JoinDto.nickname,
     );
   }
-
   @UseGuards(JwtAuthGuard)
   @Post('refresh')
-  async refresh(@Body('refreshToken') refreshToken: string) {
+  async refresh(@Body() refreshToken: RefreshDto) {
     return this.authService.refresh(refreshToken);
   }
 }

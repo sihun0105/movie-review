@@ -20,7 +20,7 @@ import { TasksService } from './tasks/tasks.service';
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '10d' },
     }),
     CacheModule.register({
       store: redisStore,
