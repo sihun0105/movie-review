@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -55,7 +54,6 @@ export class AuthService {
     if (!refresh_token) {
       throw new UnauthorizedException('Refresh token must be provided');
     }
-
     const decodedRefreshToken = this.jwtService.verify(refresh_token, {
       secret: process.env.JWT_REFRESH_SECRET,
     });
@@ -67,11 +65,10 @@ export class AuthService {
     if (!userId) {
       throw new UnauthorizedException('Invalid user!');
     }
-
     const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
       expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
     });
-
     return { accessToken };
   }
 

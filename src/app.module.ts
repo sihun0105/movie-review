@@ -17,10 +17,7 @@ import { TasksService } from './tasks/tasks.service';
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '10d' },
-    }),
+    JwtModule,
     HttpModule,
     ReviewModule,
     ScheduleModule.forRoot(),
