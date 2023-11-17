@@ -1,11 +1,10 @@
-import { Module, CacheModule, OnApplicationBootstrap } from '@nestjs/common';
+import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { UserService } from './user/user.service';
 import { UserController } from './user/user.controller';
 import { JwtStrategy } from './auth/jwt.strategy';
 import { AuthService } from './auth/auth.service';
-import * as redisStore from 'cache-manager-ioredis';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MovieService } from './movie/movie.service';
@@ -21,11 +20,6 @@ import { TasksService } from './tasks/tasks.service';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '10d' },
-    }),
-    CacheModule.register({
-      store: redisStore,
-      host: 'localhost',
-      port: 6379,
     }),
     HttpModule,
     ReviewModule,

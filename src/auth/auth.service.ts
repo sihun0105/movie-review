@@ -1,24 +1,18 @@
 import {
   BadRequestException,
-  CACHE_MANAGER,
   Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcryptjs';
-import { Cache } from 'cache-manager';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { hash } from 'bcryptjs';
 import { RefreshTokenDto } from './dto/refresh-token-dto';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private jwtService: JwtService,
-    private prisma: PrismaService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  constructor(private jwtService: JwtService, private prisma: PrismaService) {}
 
   async validateUser(email: string, password: string) {
     if (!email || !password)
@@ -47,7 +41,6 @@ export class AuthService {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME,
     });
-    await this.cacheManager.set(payload.username, acc, 24 * 60 * 60);
     return {
       accessToken: acc,
       refreshToken: ref,
