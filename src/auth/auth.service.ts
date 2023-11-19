@@ -8,6 +8,7 @@ import { compare } from 'bcryptjs';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { hash } from 'bcryptjs';
 import { RefreshTokenDto } from './dto/refresh-token-dto';
+import { user } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +30,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
+  async login(user: Omit<user, 'password'>) {
     const payload = { username: user.email, userid: user.id };
     const acc = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,

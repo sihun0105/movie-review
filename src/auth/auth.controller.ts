@@ -7,17 +7,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from 'src/user/dto/login.dto';
-import { JoinDto } from 'src/user/dto/Join.dto';
-import { RefreshDto } from 'src/user/dto/refreshToken.dto';
+import { JoinDto } from 'src/auth/dto/join-user-dto';
 import { JwtAuthGuard } from './JwtAuthGuard';
+import { RefreshTokenDto } from './dto/refresh-token-dto';
+import { LoginUserDto } from './dto/login-user-dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Post('login')
   @HttpCode(200)
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginUserDto) {
     const user = await this.authService.validateUser(
       loginDto.email,
       loginDto.password,
@@ -38,7 +38,7 @@ export class AuthController {
   }
   @UseGuards(JwtAuthGuard)
   @Post('refresh')
-  async refresh(@Body() refreshToken: RefreshDto) {
+  async refresh(@Body() refreshToken: RefreshTokenDto) {
     return this.authService.refresh(refreshToken);
   }
 }
