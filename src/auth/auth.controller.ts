@@ -36,7 +36,6 @@ export class AuthController {
       JoinDto.nickname,
     );
   }
-  @UseGuards(JwtAuthGuard)
   @Post('refresh')
   async refresh(@Body() refreshToken: RefreshTokenDto) {
     return this.authService.refresh(refreshToken);

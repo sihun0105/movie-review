@@ -44,6 +44,7 @@ export class AuthService {
     return {
       accessToken: acc,
       refreshToken: ref,
+      expireTime: process.env.ACCESS_TOKEN_EXPIRE_TIME,
     };
   }
 
@@ -51,7 +52,6 @@ export class AuthService {
     refreshTokenDto: RefreshTokenDto,
   ): Promise<{ accessToken: string }> {
     const { refresh_token } = refreshTokenDto;
-
     if (!refresh_token) {
       throw new UnauthorizedException('Refresh token must be provided');
     }
