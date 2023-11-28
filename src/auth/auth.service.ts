@@ -33,7 +33,7 @@ export class AuthService {
   async login(user: Omit<user, 'password'>) {
     const payload = { username: user.email, userid: user.id };
     const acc = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_ACCESS_SECRET,
       expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
     });
     const refreshPayload = { payload, acc };
@@ -67,7 +67,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid user!');
     }
     const accessToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_ACCESS_SECRET,
       expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
     });
     return { accessToken };
