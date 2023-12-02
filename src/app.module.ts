@@ -1,4 +1,9 @@
-import { Module, OnApplicationBootstrap } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  OnApplicationBootstrap,
+} from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { UserService } from './user/user.service';
@@ -14,6 +19,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaService } from './prisma/prisma.service';
 import { AuthController } from './auth/auth.controller';
 import { TasksService } from './tasks/tasks.service';
+import { ConfigModule } from '@nestjs/config';
+import { FileModule } from './file/file.module';
+import { LoggerMiddleware } from './middleware/logger.middleware';
 @Module({
   imports: [
     PassportModule,
@@ -21,6 +29,11 @@ import { TasksService } from './tasks/tasks.service';
     HttpModule,
     ReviewModule,
     ScheduleModule.forRoot(),
+    ConfigModule.forRoot({
+      cache: true,
+      isGlobal: true,
+    }),
+    FileModule,
   ],
   controllers: [UserController, AppController, AuthController],
   providers: [
@@ -33,9 +46,12 @@ import { TasksService } from './tasks/tasks.service';
     TasksService,
   ],
 })
-export class AppModule implements OnApplicationBootstrap {
+export class AppModule implements OnApplicationBootstrap, NestModule {
   constructor(private readonly movieService: MovieService) {}
 
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
   async onApplicationBootstrap() {
     const nowdate = new Date();
     const formattedDate =
