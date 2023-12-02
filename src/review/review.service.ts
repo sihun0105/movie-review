@@ -8,39 +8,74 @@ import { comment } from '@prisma/client';
 export class ReviewService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createReviewDto: CreateReviewDto): Promise<comment> {
+  async create({
+    data,
+    userId,
+  }: {
+    data: CreateReviewDto;
+    userId: number;
+  }): Promise<comment> {
     return await this.prisma.comment.create({
       data: {
-        comment: createReviewDto.comment,
-        movieId: createReviewDto.movieId,
-        userno: createReviewDto.writer,
+        userno: userId,
+        comment: data.comment,
+        movieId: data.movieId,
       },
     });
   }
 
-  async update(updateReviewDto: UpdateReviewDto): Promise<comment> {
-    const comment = await this.prisma.comment.update({
-      where: { id: updateReviewDto.id },
+  async update({
+    data,
+    userId,
+  }: {
+    data: UpdateReviewDto;
+    userId: number;
+  }): Promise<comment> {
+    const existingComment = await this.prisma.comment.findUnique({
+      where: { id: data.commentId },
+    });
+
+    if (!existingComment) {
+      throw new Error('해당하는 comment가 없습니다.');
+    }
+
+    if (existingComment.userno !== userId) {
+      throw new Error('본인의 comment만 업데이트할 수 있습니다.');
+    }
+
+    const updatedComment = await this.prisma.comment.update({
+      where: { id: data.commentId },
       data: {
-        comment: updateReviewDto.comment,
-        userno: updateReviewDto.writer,
+        comment: data.comment,
       },
     });
-    if (!comment) {
-      throw new Error('업데이트할 데이터가 없습니다.');
-    }
-    return comment;
+
+    return updatedComment;
   }
 
-  async remove(id: number): Promise<comment> {
-    const comment = await this.prisma.comment.delete({
-      where: {
-        id: id,
-      },
+  async remove({
+    commentId,
+    userId,
+  }: {
+    commentId: number;
+    userId: number;
+  }): Promise<comment> {
+    const existingComment = await this.prisma.comment.findUnique({
+      where: { id: commentId },
     });
-    if (!comment) {
-      throw new Error('삭제할 데이터가 없습니다.');
+
+    if (!existingComment) {
+      throw new Error('해당하는 comment가 없습니다.');
     }
-    return comment;
+
+    if (existingComment.userno !== userId) {
+      throw new Error('본인의 comment만 삭제할 수 있습니다.');
+    }
+
+    const deletedComment = await this.prisma.comment.delete({
+      where: { id: commentId },
+    });
+
+    return deletedComment;
   }
 }
