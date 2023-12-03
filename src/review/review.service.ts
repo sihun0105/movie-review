@@ -2,11 +2,36 @@ import { Injectable } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { comment } from '@prisma/client';
+import { Comment } from '@prisma/client';
+import { Review } from './review.type';
 
 @Injectable()
 export class ReviewService {
   constructor(private prisma: PrismaService) {}
+
+  async getReviewByMovieId(movieId: number): Promise<Review[]> {
+    return await this.prisma.comment.findMany({
+      where: {
+        movieId: +movieId,
+        deletedAt: null,
+      },
+      select: {
+        comment: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          select: {
+            nickname: true,
+            id: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 
   async create({
     data,
@@ -14,12 +39,12 @@ export class ReviewService {
   }: {
     data: CreateReviewDto;
     userId: number;
-  }): Promise<comment> {
+  }): Promise<Comment> {
     return await this.prisma.comment.create({
       data: {
         userno: userId,
         comment: data.comment,
-        movieId: data.movieId,
+        movieId: +data.movieId,
       },
     });
   }
@@ -30,7 +55,7 @@ export class ReviewService {
   }: {
     data: UpdateReviewDto;
     userId: number;
-  }): Promise<comment> {
+  }): Promise<Comment> {
     const existingComment = await this.prisma.comment.findUnique({
       where: { id: data.commentId },
     });
@@ -59,9 +84,9 @@ export class ReviewService {
   }: {
     commentId: number;
     userId: number;
-  }): Promise<comment> {
+  }): Promise<Comment> {
     const existingComment = await this.prisma.comment.findUnique({
-      where: { id: commentId },
+      where: { id: +commentId },
     });
 
     if (!existingComment) {
@@ -72,8 +97,11 @@ export class ReviewService {
       throw new Error('본인의 comment만 삭제할 수 있습니다.');
     }
 
-    const deletedComment = await this.prisma.comment.delete({
-      where: { id: commentId },
+    const deletedComment = await this.prisma.comment.update({
+      where: { id: +commentId },
+      data: {
+        deletedAt: new Date(),
+      },
     });
 
     return deletedComment;

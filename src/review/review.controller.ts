@@ -5,6 +5,8 @@ import {
   Delete,
   UseGuards,
   Request,
+  Get,
+  Param,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -14,6 +16,11 @@ import { JwtAuthGuard } from 'src/auth/JwtAuthGuard';
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
+  @Get(':movieId')
+  @UseGuards(JwtAuthGuard)
+  getReviewByMovieId(@Param('movieId') movieId: number) {
+    return this.reviewService.getReviewByMovieId(movieId);
+  }
 
   @Post('')
   @UseGuards(JwtAuthGuard)
@@ -31,7 +38,7 @@ export class ReviewController {
 
   @Delete('')
   @UseGuards(JwtAuthGuard)
-  remove(@Request() req, @Body() commentId: number) {
+  remove(@Request() req, @Body() { commentId }: { commentId: number }) {
     const userId = req.user.userid;
     return this.reviewService.remove({ commentId, userId });
   }
