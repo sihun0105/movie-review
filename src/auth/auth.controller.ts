@@ -4,11 +4,9 @@ import {
   HttpCode,
   HttpException,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JoinDto } from 'src/auth/dto/join-user-dto';
-import { JwtAuthGuard } from './JwtAuthGuard';
 import { RefreshTokenDto } from './dto/refresh-token-dto';
 import { LoginUserDto } from './dto/login-user-dto';
 

@@ -15,8 +15,8 @@ async function bootstrap() {
        *                       배포 환경에서는 true로 설정하는 걸 추천합니다.
        */
       whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
+      forbidNonWhitelisted: false,
+      transform: false,
       disableErrorMessages: false,
     }),
   );
