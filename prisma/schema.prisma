@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model comment {
+model Comment {
   id        Int       @id @default(autoincrement())
   movieId   Int
   createdAt DateTime  @default(now()) @db.DateTime(6)
@@ -15,20 +15,27 @@ model comment {
   deletedAt DateTime? @db.DateTime(6)
   userno    Int
   comment   String    @db.VarChar(255)
+  movie     Movie     @relation(fields: [movieId], references: [movieCd])
+  user      User      @relation(fields: [userno], references: [id])
 
-  @@index([movieId], map: "FK_aea4918c888422550a85e257894")
+  @@index([movieId], map: "movieId_idx")
+  @@index([userno], map: "user_no_idx")
 }
 
-model movie {
-  id        Int      @id @default(autoincrement())
+model Movie {
+  id        Int       @id @default(autoincrement())
   audience  Int
-  movieCd   Int
-  title     String   @db.VarChar(255)
-  createdAt DateTime @default(now()) @db.DateTime(6)
-  updatedAt DateTime @default(now()) @db.DateTime(6)
+  movieCd   Int       @unique
+  title     String    @db.VarChar(255)
+  rank      Int
+  createdAt DateTime  @default(now()) @db.DateTime(6)
+  updatedAt DateTime  @default(now()) @db.DateTime(6)
+  comments  Comment[]
+
+  @@index([movieCd], map: "movieId")
 }
 
-model user {
+model User {
   id        Int       @id @default(autoincrement())
   email     String    @unique(map: "IDX_e12875dfb3b1d92d7d7c5377e2") @db.VarChar(30)
   nickname  String    @db.VarChar(30)
@@ -36,4 +43,5 @@ model user {
   createdAt DateTime  @default(now()) @db.DateTime(6)
   updatedAt DateTime  @default(now()) @db.DateTime(6)
   deletedAt DateTime? @db.DateTime(6)
+  comments  Comment[]
 }
