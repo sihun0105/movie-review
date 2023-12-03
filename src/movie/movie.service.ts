@@ -15,7 +15,21 @@ export class MovieService {
   ) {}
 
   async getMovies() {
-    const movieList = await this.prisma.movie.findMany({});
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const movieList = await this.prisma.movie.findMany({
+      where: {
+        updatedAt: {
+          gte: today,
+        },
+      },
+      take: 10,
+      orderBy: {
+        rank: 'asc',
+      },
+    });
+
     return movieList;
   }
 
@@ -25,18 +39,24 @@ export class MovieService {
 
     const movieList = response.data.boxOfficeResult.dailyBoxOfficeList;
 
-    await this.prisma.movie.deleteMany({});
-
-    const createMovies = movieList.map((movieData) =>
-      this.prisma.movie.create({
-        data: {
+    const upsertMovies = movieList.map((movieData) =>
+      this.prisma.movie.upsert({
+        where: { movieCd: +movieData.movieCd },
+        update: {
+          title: movieData.movieNm,
+          audience: +movieData.audiAcc,
+          rank: +movieData.rank,
+          updatedAt: new Date(),
+        },
+        create: {
           title: movieData.movieNm,
           movieCd: +movieData.movieCd,
           audience: +movieData.audiAcc,
+          rank: +movieData.rank,
         },
       }),
     );
 
-    await Promise.all(createMovies);
+    await Promise.all(upsertMovies);
   }
 }

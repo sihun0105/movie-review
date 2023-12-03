@@ -1,4 +1,5 @@
 export interface Movie {
+  rank: number;
   movieNm: string;
   movieCd: string;
   audiAcc: number;
