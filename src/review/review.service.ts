@@ -16,6 +16,7 @@ export class ReviewService {
         deletedAt: null,
       },
       select: {
+        id: true,
         comment: true,
         createdAt: true,
         updatedAt: true,

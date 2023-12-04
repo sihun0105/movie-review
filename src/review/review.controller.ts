@@ -6,7 +6,7 @@ import {
   UseGuards,
   Request,
   Get,
-  Param,
+  Query,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -16,9 +16,9 @@ import { JwtAuthGuard } from 'src/auth/JwtAuthGuard';
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
-  @Get(':movieId')
+  @Get('')
   @UseGuards(JwtAuthGuard)
-  getReviewByMovieId(@Param('movieId') movieId: number) {
+  getReviewByMovieId(@Query('movieId') movieId: number) {
     return this.reviewService.getReviewByMovieId(movieId);
   }
 
