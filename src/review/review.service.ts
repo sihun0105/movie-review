@@ -10,7 +10,7 @@ export class ReviewService {
   constructor(private prisma: PrismaService) {}
 
   async getReviewByMovieId(movieId: number): Promise<Review[]> {
-    return await this.prisma.comment.findMany({
+    const reviewData = await this.prisma.comment.findMany({
       where: {
         movieId: +movieId,
         deletedAt: null,
@@ -32,6 +32,7 @@ export class ReviewService {
         createdAt: 'desc',
       },
     });
+    return reviewData;
   }
 
   async create({

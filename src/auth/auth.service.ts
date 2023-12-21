@@ -41,11 +41,7 @@ export class AuthService {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME,
     });
-    return {
-      accessToken: acc,
-      refreshToken: ref,
-      expireTime: process.env.ACCESS_TOKEN_EXPIRE_TIME,
-    };
+    return user;
   }
 
   async refresh(

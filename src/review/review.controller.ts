@@ -19,7 +19,11 @@ export class ReviewController {
   @Get('')
   @UseGuards(JwtAuthGuard)
   getReviewByMovieId(@Query('movieId') movieId: number) {
-    return this.reviewService.getReviewByMovieId(movieId);
+    const reviewData = this.reviewService.getReviewByMovieId(movieId);
+    if (!reviewData) {
+      return {};
+    }
+    return reviewData;
   }
 
   @Post('')
