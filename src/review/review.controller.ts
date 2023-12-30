@@ -7,6 +7,7 @@ import {
   Request,
   Get,
   Query,
+  Param,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -40,9 +41,9 @@ export class ReviewController {
     return this.reviewService.update({ data: updateReviewDto, userId: userId });
   }
 
-  @Delete('')
+  @Delete(':commentId')
   @UseGuards(JwtAuthGuard)
-  remove(@Request() req, @Body() { commentId }: { commentId: number }) {
+  remove(@Request() req, @Param() { commentId }: { commentId: number }) {
     const userId = req.user.userid;
     return this.reviewService.remove({ commentId, userId });
   }
