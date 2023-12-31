@@ -75,6 +75,12 @@ export class AuthService {
 
   async create(email: string, password: string, nickname: string) {
     const hashedPassword = await hash(password, 10);
+    const existedNickname = await this.prisma.user.findFirst({
+      where: { nickname },
+    });
+    if (existedNickname) {
+      throw new BadRequestException('이미 존재하는 닉네임입니다.');
+    }
     const user = this.prisma.user.create({
       data: {
         email,
