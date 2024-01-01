@@ -36,27 +36,27 @@ export class MovieService {
   async fetchMovies(date: string): Promise<void> {
     const url = `${this.baseUrl}?key=${this.apiKey}&targetDt=${date}`;
     const response = await this.httpService.get<MovieResponse>(url).toPromise();
+    if (response.data.boxOfficeResult.dailyBoxOfficeList) {
+      const movieList = response.data.boxOfficeResult.dailyBoxOfficeList;
+      const upsertMovies = movieList.map((movieData) =>
+        this.prisma.movie.upsert({
+          where: { movieCd: +movieData.movieCd },
+          update: {
+            title: movieData.movieNm,
+            audience: +movieData.audiAcc,
+            rank: +movieData.rank,
+            updatedAt: new Date(),
+          },
+          create: {
+            title: movieData.movieNm,
+            movieCd: +movieData.movieCd,
+            audience: +movieData.audiAcc,
+            rank: +movieData.rank,
+          },
+        }),
+      );
 
-    const movieList = response.data.boxOfficeResult.dailyBoxOfficeList;
-
-    const upsertMovies = movieList.map((movieData) =>
-      this.prisma.movie.upsert({
-        where: { movieCd: +movieData.movieCd },
-        update: {
-          title: movieData.movieNm,
-          audience: +movieData.audiAcc,
-          rank: +movieData.rank,
-          updatedAt: new Date(),
-        },
-        create: {
-          title: movieData.movieNm,
-          movieCd: +movieData.movieCd,
-          audience: +movieData.audiAcc,
-          rank: +movieData.rank,
-        },
-      }),
-    );
-
-    await Promise.all(upsertMovies);
+      await Promise.all(upsertMovies);
+    }
   }
 }
