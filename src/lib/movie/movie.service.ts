@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MovieResponse } from './movie-type';
+import axios from 'axios';
 
 @Injectable()
 export class MovieService {
@@ -9,10 +9,7 @@ export class MovieService {
   private readonly baseUrl =
     'http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json';
 
-  constructor(
-    private httpService: HttpService,
-    private prisma: PrismaService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async getMovies() {
     const today = new Date();
@@ -35,7 +32,7 @@ export class MovieService {
 
   async fetchMovies(date: string): Promise<void> {
     const url = `${this.baseUrl}?key=${this.apiKey}&targetDt=${date}`;
-    const response = await this.httpService.get<MovieResponse>(url).toPromise();
+    const response = await axios.get<MovieResponse>(url);
     if (response.data.boxOfficeResult.dailyBoxOfficeList) {
       const movieList = response.data.boxOfficeResult.dailyBoxOfficeList;
       const upsertMovies = movieList.map((movieData) =>

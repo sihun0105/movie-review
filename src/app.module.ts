@@ -6,27 +6,26 @@ import {
 } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { UserService } from './user/user.service';
-import { UserController } from './user/user.controller';
-import { JwtStrategy } from './auth/jwt.strategy';
-import { AuthService } from './auth/auth.service';
+import { JwtStrategy } from './domain/auth/jwt.strategy';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MovieService } from './movie/movie.service';
-import { HttpModule } from '@nestjs/axios';
-import { ReviewModule } from './review/review.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { PrismaService } from './prisma/prisma.service';
-import { AuthController } from './auth/auth.controller';
-import { TasksService } from './tasks/tasks.service';
 import { ConfigModule } from '@nestjs/config';
-import { FileModule } from './file/file.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { ReviewModule } from './domain/review/review.module';
+import { FileModule } from './lib/file/file.module';
+import { MovieService } from './lib/movie/movie.service';
+import { UserModule } from './domain/user/user.module';
+import { AuthModule } from './domain/auth/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { MovieModule } from './lib/movie/movie.module';
+import { TasksModule } from './tasks/tasks.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ResponseInterceptor } from './interceptors/response.interceptor';
 @Module({
   imports: [
     PassportModule,
     JwtModule,
-    HttpModule,
     ReviewModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
@@ -34,16 +33,21 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
       isGlobal: true,
     }),
     FileModule,
+    UserModule,
+    AuthModule,
+    PrismaModule,
+    MovieModule,
+    TasksModule,
   ],
-  controllers: [UserController, AppController, AuthController],
+  controllers: [AppController],
   providers: [
-    UserService,
-    AuthService,
     JwtStrategy,
     AppService,
     MovieService,
-    PrismaService,
-    TasksService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
   ],
 })
 export class AppModule implements OnApplicationBootstrap, NestModule {
