@@ -15,8 +15,8 @@ model Comment {
   deletedAt DateTime? @db.DateTime(6)
   userno    Int
   comment   String    @db.VarChar(255)
-  movie     Movie     @relation(fields: [movieId], references: [movieCd])
-  user      User      @relation(fields: [userno], references: [id])
+  movie     Movie     @relation(fields: [movieId], references: [movieCd], onDelete: Cascade)
+  user      User      @relation(fields: [userno], references: [id], onDelete: Cascade)
 
   @@index([movieId], map: "movieId_idx")
   @@index([userno], map: "user_no_idx")
@@ -36,12 +36,78 @@ model Movie {
 }
 
 model User {
+  id               Int                @id @default(autoincrement())
+  email            String             @unique(map: "IDX_e12875dfb3b1d92d7d7c5377e2") @db.VarChar(30)
+  nickname         String             @db.VarChar(30)
+  password         String             @db.VarChar(100)
+  createdAt        DateTime           @default(now()) @db.DateTime(6)
+  updatedAt        DateTime           @default(now()) @db.DateTime(6)
+  deletedAt        DateTime?          @db.DateTime(6)
+  comments         Comment[]
+  channelchats     channelchats[]
+  channelmembers   channelmembers[]
+  workspace        workspace[]
+  workspacemembers workspacemembers[]
+}
+
+model channelchats {
   id        Int       @id @default(autoincrement())
-  email     String    @unique(map: "IDX_e12875dfb3b1d92d7d7c5377e2") @db.VarChar(30)
-  nickname  String    @db.VarChar(30)
-  password  String    @db.VarChar(100)
+  content   String    @db.Text
   createdAt DateTime  @default(now()) @db.DateTime(6)
   updatedAt DateTime  @default(now()) @db.DateTime(6)
-  deletedAt DateTime? @db.DateTime(6)
-  comments  Comment[]
+  UserId    Int?
+  ChannelId Int?
+  channels  channels? @relation(fields: [ChannelId], references: [id], map: "FK_channels")
+  User      User?     @relation(fields: [UserId], references: [id], map: "FK_user")
+
+  @@index([UserId], map: "FK_8494e7d49237c46d648fbab8cf4_idx")
+  @@index([ChannelId], map: "FK_8494e7d49237c46d648fbab8cf4_idx1")
+}
+
+model channelmembers {
+  ChannelId Int
+  UserId    Int
+  createdAt DateTime @default(now()) @db.DateTime(6)
+  updatedAt DateTime @default(now()) @db.DateTime(6)
+  User      User     @relation(fields: [UserId], references: [id], onDelete: Cascade, map: "FK_user_channelmembers")
+
+  @@id([UserId, ChannelId])
+}
+
+model channels {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(30)
+  private      Boolean?       @default(false)
+  createdAt    DateTime       @default(now()) @db.DateTime(6)
+  updatedAt    DateTime       @default(now()) @db.DateTime(6)
+  WorkspaceId  Int?
+  channelchats channelchats[]
+  workspace    workspace?     @relation(fields: [WorkspaceId], references: [id], map: "FK_channels_workspaces")
+
+  @@index([WorkspaceId], map: "FK_channels_workspaces_idx")
+}
+
+model workspace {
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(30)
+  url       String     @db.VarChar(30)
+  createdAt DateTime   @default(now()) @db.DateTime(6)
+  updatedAt DateTime   @default(now()) @db.DateTime(6)
+  deletedAt DateTime?  @db.DateTime(6)
+  OwnerId   Int?
+  channels  channels[]
+  User      User?      @relation(fields: [OwnerId], references: [id], map: "FK_workspace_user")
+
+  @@index([OwnerId], map: "FK_workspace_user_idx")
+}
+
+model workspacemembers {
+  WorkspaceId Int
+  UserId      Int
+  createdAt   DateTime  @default(now()) @db.DateTime(6)
+  updatedAt   DateTime  @default(now()) @db.DateTime(6)
+  loggedInAt  DateTime? @db.DateTime(0)
+  User        User      @relation(fields: [UserId], references: [id], onDelete: Cascade, map: "FK_workspacemembers_user")
+
+  @@id([UserId, WorkspaceId])
 }

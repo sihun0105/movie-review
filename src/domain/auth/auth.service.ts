@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcryptjs';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '@/lib/prisma/prisma.service';
 import { hash } from 'bcryptjs';
 import { RefreshTokenDto } from './dto/refresh-token-dto';
 import { User } from '@prisma/client';
